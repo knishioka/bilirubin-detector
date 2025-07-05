@@ -216,7 +216,7 @@ graph TB
     
     Store --> Matrix[変換行列計算]
     
-    Matrix --> LSQ[最小二乗法<br/>M = (XᵀX)⁻¹Xᵀy]
+    Matrix --> LSQ["最小二乗法<br/>M = (X'X)^-1 X'y"]
     
     LSQ --> Transform["3x4変換行列"]
     
