@@ -27,50 +27,42 @@
 - **色較正対応**: 様々な照明条件での安定した測定
 - **拡張可能**: 将来的な深層学習モデルの統合を考慮した設計
 
-## 🔬 技術的背景
-
-### 科学的根拠
-
-黄疸は血中ビリルビン濃度の上昇により皮膚や眼球結膜が黄色く変色する症状です。本システムは以下の科学的知見に基づいています：
-
-1. **ビリルビンの光学的特性**: ビリルビンは450-460nmの青色光を吸収し、黄色を呈する
-2. **結膜での視認性**: 眼球結膜は血管が豊富で、ビリルビンの蓄積が視覚的に確認しやすい
-3. **色空間での定量化**: HSV色空間における黄色成分（Hue: 20-40°）の比率がビリルビン濃度と相関
-
-### 採用技術
-
-- **RGB/HSVカラー空間解析**: 研究で実証された高精度な色特徴抽出
-- **自動眼球検出**: OpenCVのカスケード分類器による結膜領域の自動検出
-- **色較正機能**: 照明条件の違いを補正する色較正カードサポート
-- **機械学習対応設計**: 将来的な深層学習モデルの統合を考慮したアーキテクチャ
-
-## 📥 セットアップ
-
-### 必要環境
-
-- Python 3.9以上
-- OpenCV対応のシステム（Windows/macOS/Linux）
-- Webカメラまたは画像ファイル
-
-### クイックスタート
+## 🚀 クイックスタート
 
 ```bash
-# リポジトリのクローン
-git clone https://github.com/your-repo/bilirubin-detector.git
+# 1. リポジトリのクローン
+git clone https://github.com/knishioka/bilirubin-detector.git
 cd bilirubin-detector
 
-# 仮想環境の作成（推奨）
-python -m venv venv
-source venv/bin/activate  # macOS/Linux
-# または
-venv\Scripts\activate  # Windows
+# 2. 依存関係のインストール（uvを推奨）
+uv pip install -r requirements.txt
 
-# 依存パッケージのインストール
-pip install -r requirements.txt
+# 3. ビリルビン検出
+python bilirubin_detector.py sample_images/eye_mild_jaundice.jpg
 
-# 動作確認
-python test_detector.py --test-all
+# 4. ダークサークル検出
+python dark_circle_detector.py path/to/face_image.jpg
 ```
+
+詳細は[インストールガイド](docs/installation.md)を参照してください。
+
+## 📚 ドキュメント
+
+### セットアップ・使い方
+- [📥 インストールガイド](docs/installation.md) - 環境構築の詳細手順
+- [💡 使用例とチュートリアル](docs/examples.md) - 実践的なコード例
+- [🔧 トラブルシューティング](docs/troubleshooting.md) - 問題解決ガイド
+
+### 技術ドキュメント
+- [🔬 ビリルビン検出の技術手法](docs/methodology.md) - アルゴリズムの科学的背景
+- [👁️ ダークサークル検出の技術手法](docs/dark_circle_methodology.md) - CIELAB解析の詳細
+- [📐 システムアーキテクチャ](docs/architecture.md) - 設計思想と構造
+- [📊 アルゴリズムフロー図](docs/algorithm_flowchart.md) - 処理の流れ
+
+### 開発者向け
+- [🔍 APIリファレンス](docs/api_reference.md) - クラス・メソッドの詳細
+- [🧪 テストガイド](docs/testing.md) - テスト方法と結果の解釈
+- [💻 開発ガイド](docs/development.md) - コントリビューション方法
 
 ## 🚀 使用方法
 
@@ -128,30 +120,43 @@ done
 
 ```
 health-tech/
-├── bilirubin_detector.py    # ビリルビン検出スクリプト
-├── dark_circle_detector.py  # ダークサークル検出スクリプト
-├── test_detector.py         # ビリルビン検出テスト
-├── test_dark_circle_detection.py # ダークサークル検出テスト
-├── generate_dark_circle_samples.py # サンプル画像生成
-├── requirements.txt         # Python依存パッケージ
-├── README.md               # プロジェクト概要
-├── utils/                  # ユーティリティモジュール
-│   ├── __init__.py
-│   ├── image_processing.py  # 画像処理（眼球検出）
-│   ├── color_analysis.py    # 色空間解析
-│   ├── calibration.py       # 色較正機能
-│   ├── periorbital_detection.py # 眼窩周囲領域検出
-│   ├── dark_circle_analysis.py  # ダークサークル色解析
-│   └── dark_circle_segmentation.py # ダークサークル領域分割
-├── docs/                   # ドキュメント
-│   ├── methodology.md      # 技術手法の詳細
-│   ├── api_reference.md    # API リファレンス
-│   ├── examples.md         # 使用例とチュートリアル
-│   ├── development.md      # 開発ガイド
-│   ├── algorithm_flowchart.md # アルゴリズムフロー図
-│   ├── images/            # ドキュメント用画像
-│   └── research/          # 参考研究論文
-└── sample_images/         # テスト用画像
+├── bilirubin_detector.py      # ビリルビン検出メインスクリプト
+├── dark_circle_detector.py    # ダークサークル検出メインスクリプト
+├── requirements.txt           # Python依存パッケージ
+├── README.md                  # プロジェクト概要
+│
+├── utils/                     # コアモジュール
+│   ├── image_processing.py    # 画像処理・眼球検出
+│   ├── color_analysis.py      # 色空間解析
+│   ├── calibration.py         # 色較正機能
+│   ├── periorbital_detection.py      # 眼窩周囲領域検出
+│   ├── dark_circle_analysis.py       # ダークサークル色解析
+│   └── dark_circle_segmentation.py   # 領域分割
+│
+├── scripts/                   # ユーティリティスクリプト
+│   ├── data_generation/       # テストデータ生成
+│   │   ├── create_jaundice_samples.py
+│   │   └── generate_dark_circle_samples.py
+│   ├── evaluation/            # 評価・テスト
+│   │   ├── test_detector.py
+│   │   └── test_dark_circle_detection.py
+│   └── visualization/         # 可視化
+│       └── create_algorithm_diagrams.py
+│
+├── docs/                      # ドキュメント
+│   ├── installation.md        # インストールガイド
+│   ├── troubleshooting.md     # トラブルシューティング
+│   ├── methodology.md         # ビリルビン検出技術
+│   ├── dark_circle_methodology.md  # ダークサークル検出技術
+│   ├── architecture.md        # システムアーキテクチャ
+│   ├── api_reference.md       # APIリファレンス
+│   ├── testing.md             # テストガイド
+│   ├── examples.md            # 使用例
+│   └── development.md         # 開発ガイド
+│
+└── sample_images/             # サンプル画像
+    └── samples/
+        └── dark_circles/      # ダークサークルサンプル
 ```
 
 ## 📊 出力結果
@@ -232,28 +237,19 @@ health-tech/
 - **Redness Index**: 血管成分の指標
 - **Blueness Index**: 静脈うっ血の指標
 
-## 🔧 技術的詳細
+## 🔬 技術概要
 
-### 📚 技術ドキュメント
+### ビリルビン検出
+- **原理**: 結膜の黄色度からビリルビン値を推定
+- **色空間**: RGB/HSV/LAB多重解析
+- **精度目標**: 研究論文の85-96%を目指す
 
-- [技術手法の詳細](docs/methodology.md) - アルゴリズムの科学的背景と実装詳細
-- [APIリファレンス](docs/api_reference.md) - クラス・メソッドの詳細仕様
-- [使用例とチュートリアル](docs/examples.md) - 実践的なコード例
-- [アルゴリズムフロー図](docs/algorithm_flowchart.md) - 処理の流れを視覚的に説明
-- [開発ガイド](docs/development.md) - 開発環境構築とコントリビューション方法
+### ダークサークル検出
+- **原理**: CIELAB色空間でのΔE（色差）解析
+- **評価基準**: CIE2000色差式による客観的評価
+- **対応タイプ**: 色素沈着型、血管型、構造型、混合型
 
-### アルゴリズムの概要
-
-1. **前処理**: CLAHE（適応的ヒストグラム均等化）によるコントラスト強調
-2. **領域検出**: Haar Cascadeによる顔・眼検出、HSVマスキングによる結膜抽出
-3. **特徴抽出**: 複数色空間（RGB, HSV, LAB）での統計量算出
-4. **推定**: 線形回帰モデルによるビリルビン値推定（将来的にDNNへ移行予定）
-
-### パフォーマンス
-
-- 処理時間: 約1-3秒/画像（CPU）
-- メモリ使用量: < 500MB
-- 対応画像サイズ: 最大4K（自動リサイズ）
+詳細は技術ドキュメントを参照してください。
 
 ## ⚠️ 注意事項
 

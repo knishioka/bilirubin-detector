@@ -6,10 +6,19 @@
 
 ## 目次
 
+### ビリルビン検出
 - [BilirubinDetector](#bilirubindetector)
 - [EyeDetector](#eyedetector)
 - [ColorAnalyzer](#coloranalyzer)
 - [ColorCalibrator](#colorcalibrator)
+
+### ダークサークル検出
+- [DarkCircleDetector](#darkcircledetector)
+- [PerioribitalDetector](#perioribitaldetector)
+- [DarkCircleAnalyzer](#darkcircleanalyzer)
+- [DarkCircleSegmenter](#darkcirclesegmenter)
+
+### ユーティリティ
 - [ユーティリティ関数](#ユーティリティ関数)
 
 ---
@@ -349,11 +358,287 @@ except Exception as e:
 
 ---
 
+## DarkCircleDetector
+
+ダークサークル（目の下のクマ）を検出・評価するメインクラス。
+
+### クラス定義
+
+```python
+class DarkCircleDetector:
+    def __init__(self)
+```
+
+### メソッド
+
+#### detect_dark_circles
+
+```python
+def detect_dark_circles(self, image_path: str) -> Dict
+```
+
+画像からダークサークルを検出し、重症度を評価します。
+
+**パラメータ:**
+- `image_path` (str): 入力画像のファイルパス
+
+**戻り値:**
+- `Dict`: 検出結果を含む辞書
+
+**戻り値の構造:**
+```python
+{
+    'success': bool,              # 検出成功フラグ
+    'average_delta_e': float,     # 平均ΔE値（CIE2000）
+    'severity': str,              # 重症度 (none/mild/moderate/severe)
+    'symmetry_score': float,      # 左右対称性スコア (0-1)
+    'left_eye': {                 # 左眼の詳細
+        'delta_e': float,         # ΔE値
+        'darkness_ratio': float,  # 暗さの比率
+        'ita_infraorbital': float,# 眼窩下ITA値
+        'ita_cheek': float,       # 頬のITA値
+        'lab_infraorbital': dict, # LAB色値
+        'lab_cheek': dict,        # LAB色値
+        'redness_index': float,   # 赤み指標
+        'blueness_index': float   # 青み指標
+    },
+    'right_eye': dict,            # 右眼の詳細（同構造）
+    'face_bbox': tuple,           # 顔領域の座標
+    'masks': dict,                # セグメンテーションマスク
+    'error': str                  # エラーメッセージ（失敗時のみ）
+}
+```
+
+**使用例:**
+```python
+detector = DarkCircleDetector()
+results = detector.detect_dark_circles('face_image.jpg')
+print(f"ダークサークル重症度: {results['severity']}")
+print(f"平均ΔE: {results['average_delta_e']}")
+```
+
+#### visualize_results
+
+```python
+def visualize_results(self, image_path: str, results: Dict, output_path: str)
+```
+
+検出結果の可視化画像を生成します。
+
+**パラメータ:**
+- `image_path` (str): 元画像のパス
+- `results` (Dict): `detect_dark_circles`の戻り値
+- `output_path` (str): 出力画像の保存パス
+
+---
+
+## PerioribitalDetector
+
+眼窩周囲領域（目の周り）を検出するクラス。
+
+### クラス定義
+
+```python
+class PerioribitalDetector:
+    def __init__(self)
+```
+
+### プロパティ
+
+- `infraorbital_ratio` (float): 眼窩下領域の高さ比率（デフォルト: 0.3）
+- `cheek_ratio` (float): 頬参照領域の高さ比率（デフォルト: 0.2）
+- `lateral_extension` (float): 横方向の拡張比率（デフォルト: 0.2）
+
+### メソッド
+
+#### detect_periorbital_regions
+
+```python
+def detect_periorbital_regions(self, image: np.ndarray) -> Dict
+```
+
+画像から眼窩周囲領域を検出します。
+
+**パラメータ:**
+- `image` (np.ndarray): 入力画像（BGR形式）
+
+**戻り値:**
+- `Dict`: 検出結果を含む辞書
+
+**戻り値の構造:**
+```python
+{
+    'success': bool,              # 検出成功フラグ
+    'face_bbox': tuple,           # 顔領域 (x, y, w, h)
+    'left_eye': np.ndarray,       # 左眼画像
+    'left_infraorbital': np.ndarray,  # 左眼窩下領域
+    'left_cheek': np.ndarray,     # 左頬参照領域
+    'left_eye_bbox': tuple,       # 左眼座標
+    'right_eye': np.ndarray,      # 右眼画像
+    'right_infraorbital': np.ndarray, # 右眼窩下領域
+    'right_cheek': np.ndarray,    # 右頬参照領域
+    'right_eye_bbox': tuple,      # 右眼座標
+    'error': str                  # エラーメッセージ（失敗時のみ）
+}
+```
+
+#### draw_regions
+
+```python
+def draw_regions(self, image: np.ndarray, detection_result: Dict) -> np.ndarray
+```
+
+検出した領域を画像上に描画します（デバッグ用）。
+
+---
+
+## DarkCircleAnalyzer
+
+ダークサークルの色解析を行うクラス。CIELAB色空間での解析を実行。
+
+### クラス定義
+
+```python
+class DarkCircleAnalyzer:
+    def __init__(self)
+```
+
+### メソッド
+
+#### calculate_delta_e
+
+```python
+def calculate_delta_e(self, region1: np.ndarray, region2: np.ndarray) -> float
+```
+
+2つの領域間のCIE2000 ΔE（色差）を計算します。
+
+**パラメータ:**
+- `region1` (np.ndarray): 第1領域（例：眼窩下）
+- `region2` (np.ndarray): 第2領域（例：頬）
+
+**戻り値:**
+- `float`: ΔE値（色差）
+
+**ΔE値の解釈:**
+- < 1.0: 人間の目では区別できない
+- 1.0-3.0: わずかに認識可能
+- 3.0-5.0: 明確に認識可能
+- > 5.0: 大きな色差
+
+#### get_mean_lab
+
+```python
+def get_mean_lab(self, region: np.ndarray) -> np.ndarray
+```
+
+領域の平均LAB色値を取得します。
+
+**パラメータ:**
+- `region` (np.ndarray): 入力領域（BGR形式）
+
+**戻り値:**
+- `np.ndarray`: 平均LAB値 [L, a, b]
+
+#### calculate_ita
+
+```python
+def calculate_ita(self, lab_values: np.ndarray) -> float
+```
+
+Individual Typology Angle (ITA)を計算します。肌色分類に使用。
+
+**パラメータ:**
+- `lab_values` (np.ndarray): LAB色値 [L, a, b]
+
+**戻り値:**
+- `float`: ITA値（度）
+
+**ITA値による肌色分類:**
+- > 55°: Very light
+- 41-55°: Light
+- 28-41°: Intermediate
+- 10-28°: Tan
+- -30-10°: Brown
+- < -30°: Dark
+
+#### calculate_redness_index / calculate_blueness_index
+
+```python
+def calculate_redness_index(self, region: np.ndarray) -> float
+def calculate_blueness_index(self, region: np.ndarray) -> float
+```
+
+血管性・静脈性ダークサークルの検出用指標を計算します。
+
+**戻り値:**
+- `float`: 指標値（0-1、高いほど赤み/青みが強い）
+
+---
+
+## DarkCircleSegmenter
+
+ダークサークル領域をセグメンテーションするクラス。
+
+### クラス定義
+
+```python
+class DarkCircleSegmenter:
+    def __init__(self)
+```
+
+### プロパティ
+
+- `delta_e_threshold` (float): セグメンテーション閾値（デフォルト: 3.0）
+- `min_area_ratio` (float): 最小領域比率（デフォルト: 0.05）
+- `max_area_ratio` (float): 最大領域比率（デフォルト: 0.7）
+
+### メソッド
+
+#### segment_dark_circle
+
+```python
+def segment_dark_circle(self, eye_region: np.ndarray,
+                       infraorbital_region: np.ndarray,
+                       delta_e: float) -> np.ndarray
+```
+
+ダークサークル領域をセグメンテーションします。
+
+**パラメータ:**
+- `eye_region` (np.ndarray): 眼領域画像
+- `infraorbital_region` (np.ndarray): 眼窩下領域画像
+- `delta_e` (float): 全体のΔE値
+
+**戻り値:**
+- `np.ndarray`: バイナリマスク（ダークサークル領域が255）
+
+#### create_severity_map
+
+```python
+def create_severity_map(self, delta_e_map: np.ndarray) -> np.ndarray
+```
+
+ピクセル単位のΔE値から重症度マップを作成します。
+
+**パラメータ:**
+- `delta_e_map` (np.ndarray): ピクセル単位のΔE値
+
+**戻り値:**
+- `np.ndarray`: 重症度マップ（0-3: なし/軽度/中等度/重度）
+
+---
+
 ## バージョン互換性
 
+### ビリルビン検出
 - Python: 3.9+
 - OpenCV: 4.5+
 - NumPy: 1.19+
-- scikit-learn: 0.24+
+- scipy: 1.10+
+
+### ダークサークル検出（追加要件）
+- scikit-image: 0.21+
+- colormath: 3.0+
 
 旧バージョンでの動作は保証されません。
