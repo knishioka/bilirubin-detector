@@ -1,5 +1,9 @@
 # API リファレンス
 
+[← README](../README.md) | [← 技術手法](methodology.md) | [使用例 →](examples.md) | [開発ガイド →](development.md)
+
+---
+
 ## 目次
 
 - [BilirubinDetector](#bilirubindetector)

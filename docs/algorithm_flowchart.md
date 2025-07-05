@@ -1,5 +1,9 @@
 # アルゴリズムフロー図
 
+[← README](../README.md) | [← 技術手法](methodology.md) | [APIリファレンス →](api_reference.md) | [開発ガイド →](development.md)
+
+---
+
 ## 1. システム全体のフロー
 
 ```mermaid
@@ -156,7 +160,7 @@ graph LR
     
     Linear --> Formula[推定式<br/>B = Σ(βᵢ × fᵢ) + β₀]
     
-    Formula --> Components{構成要素}
+    Formula --> Components[構成要素]
     
     Components --> F1[f₁: HSV黄色比率<br/>β₁ = 50.0]
     Components --> F2[f₂: RGB R/B比率<br/>β₂ = 25.0]

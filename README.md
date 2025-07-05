@@ -129,7 +129,10 @@ health-tech/
 ├── docs/                   # ドキュメント
 │   ├── methodology.md      # 技術手法の詳細
 │   ├── api_reference.md    # API リファレンス
+│   ├── examples.md         # 使用例とチュートリアル
 │   ├── development.md      # 開発ガイド
+│   ├── algorithm_flowchart.md # アルゴリズムフロー図
+│   ├── images/            # ドキュメント用画像
 │   └── research/          # 参考研究論文
 └── sample_images/         # テスト用画像
 ```
@@ -172,7 +175,13 @@ health-tech/
 
 ## 🔧 技術的詳細
 
-詳細な技術情報は[技術ドキュメント](docs/methodology.md)を参照してください。
+### 📚 技術ドキュメント
+
+- [技術手法の詳細](docs/methodology.md) - アルゴリズムの科学的背景と実装詳細
+- [APIリファレンス](docs/api_reference.md) - クラス・メソッドの詳細仕様
+- [使用例とチュートリアル](docs/examples.md) - 実践的なコード例
+- [アルゴリズムフロー図](docs/algorithm_flowchart.md) - 処理の流れを視覚的に説明
+- [開発ガイド](docs/development.md) - 開発環境構築とコントリビューション方法
 
 ### アルゴリズムの概要
 
