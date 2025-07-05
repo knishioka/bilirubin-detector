@@ -158,16 +158,16 @@ graph TB
 graph LR
     Features[特徴ベクトル] --> Linear[線形結合]
     
-    Linear --> Formula[推定式<br/>B = Σ(βᵢ × fᵢ) + β₀]
+    Linear --> Formula["推定式<br/>B = sum(βi * fi) + β0"]
     
     Formula --> Components[構成要素]
     
-    Components --> F1[f₁: HSV黄色比率<br/>β₁ = 50.0]
-    Components --> F2[f₂: RGB R/B比率<br/>β₂ = 25.0]
-    Components --> F3[f₃: LAB黄色度<br/>β₃ = 0.8]
-    Components --> F4[f₄: 複合指標<br/>β₄ = 30.0]
-    Components --> F5[f₅: 彩度平均<br/>β₅ = 10.0]
-    Components --> F0[β₀: 切片 = -5.0]
+    Components --> F1["f1: HSV黄色比率<br/>β1 = 50.0"]
+    Components --> F2["f2: RGB R/B比率<br/>β2 = 25.0"]
+    Components --> F3["f3: LAB黄色度<br/>β3 = 0.8"]
+    Components --> F4["f4: 複合指標<br/>β4 = 30.0"]
+    Components --> F5["f5: 彩度平均<br/>β5 = 10.0"]
+    Components --> F0["β0: 切片 = -5.0"]
     
     F1 --> Sum[加重和計算]
     F2 --> Sum
@@ -205,7 +205,7 @@ graph TB
     AspectRatio -->|OK| Extract[カード領域抽出]
     AspectRatio -->|NG| NextContour
     
-    Extract --> Grid[グリッド分割<br/>2×3 or 3×2]
+    Extract --> Grid["グリッド分割<br/>2x3 or 3x2"]
     Grid --> Patches[色パッチ抽出]
     
     Patches --> Loop{各パッチ}
@@ -218,7 +218,7 @@ graph TB
     
     Matrix --> LSQ[最小二乗法<br/>M = (XᵀX)⁻¹Xᵀy]
     
-    LSQ --> Transform[3×4変換行列]
+    LSQ --> Transform["3x4変換行列"]
     
     %% 参照色
     Reference[参照色<br/>白,灰,黒<br/>赤,緑,青] --> LSQ
@@ -237,26 +237,26 @@ graph TB
     EyeImage[眼領域画像] --> Checks[品質チェック]
     
     Checks --> Size{サイズ}
-    Size -->|< 20×20px| Low1[低信頼度 0.1]
-    Size -->|≥ 20×20px| Brightness
+    Size -->|"< 20x20px"| Low1[低信頼度 0.1]
+    Size -->|">= 20x20px"| Brightness
     
     Checks --> Brightness{明るさ}
     Brightness -->|30-220| OK1[適正]
     Brightness -->|その他| Low2[低信頼度 0.3]
     
     Checks --> Contrast{コントラスト}
-    Contrast -->|σ > 20| OK2[適正]
-    Contrast -->|σ ≤ 20| Low3[低信頼度 0.4]
+    Contrast -->|"σ > 20"| OK2[適正]
+    Contrast -->|"σ <= 20"| Low3[低信頼度 0.4]
     
     Checks --> WhitePixels{白色ピクセル}
-    WhitePixels -->|> 5%| OK3[適正]
-    WhitePixels -->|≤ 5%| Low4[低信頼度 0.5]
+    WhitePixels -->|"> 5%"| OK3[適正]
+    WhitePixels -->|"<= 5%"| Low4[低信頼度 0.5]
     
     OK1 --> Calculate[総合計算]
     OK2 --> Calculate
     OK3 --> Calculate
     
-    Calculate --> Formula2[信頼度 = min(1.0, 0.3 + 白色比率×2 + σ/100)]
+    Calculate --> Formula2["信頼度 = min(1.0, 0.3 + 白色比率*2 + σ/100)"]
     
     Formula2 --> Confidence[最終信頼度]
     
