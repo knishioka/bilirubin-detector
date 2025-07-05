@@ -1,9 +1,9 @@
-# ビリルビン検出システム プロトタイプ
+# ビリルビン検出システム & ダークサークル検出 プロトタイプ
 
 <div align="center">
   <img src="docs/images/system_overview.png" alt="System Overview" width="600" style="max-width: 100%;">
   
-  **AIを活用した非侵襲的ビリルビン検出システム**
+  **AIを活用した非侵襲的眼球画像解析システム**
   
   [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
   [![OpenCV](https://img.shields.io/badge/OpenCV-4.9.0-green.svg)](https://opencv.org/)
@@ -12,7 +12,12 @@
 
 ## 📋 概要
 
-本システムは、スマートフォンやWebカメラで撮影した眼球画像から、黄疸の指標となるビリルビン値を非侵襲的に推定するAIベースのプロトタイプです。最新の研究成果に基づき、RGB/HSVカラー空間解析と機械学習を組み合わせた手法を採用しています。
+本システムは、スマートフォンやWebカメラで撮影した眼球画像から、以下の健康指標を非侵襲的に推定するAIベースのプロトタイプです：
+
+1. **ビリルビン検出**: 黄疸の指標となるビリルビン値を結膜画像から推定
+2. **ダークサークル検出**: 目の下のクマ（眼窩周囲色素沈着）の検出と重症度評価
+
+最新の研究成果に基づき、RGB/HSV/CIELABカラー空間解析と機械学習を組み合わせた手法を採用しています。
 
 ### 🎯 主な特徴
 
@@ -80,6 +85,12 @@ python bilirubin_detector.py path/to/eye_image.jpg --output result.png
 
 # JSON形式で結果を出力（他システムとの連携用）
 python bilirubin_detector.py path/to/eye_image.jpg --json
+
+# ダークサークル（目の下のクマ）検出
+python dark_circle_detector.py path/to/face_image.jpg
+
+# ダークサークル検出結果を可視化
+python dark_circle_detector.py path/to/face_image.jpg --output result.png
 ```
 
 ### 高度な使用方法
@@ -117,15 +128,21 @@ done
 
 ```
 health-tech/
-├── bilirubin_detector.py    # メイン検出スクリプト
-├── test_detector.py         # テスト用スクリプト
+├── bilirubin_detector.py    # ビリルビン検出スクリプト
+├── dark_circle_detector.py  # ダークサークル検出スクリプト
+├── test_detector.py         # ビリルビン検出テスト
+├── test_dark_circle_detection.py # ダークサークル検出テスト
+├── generate_dark_circle_samples.py # サンプル画像生成
 ├── requirements.txt         # Python依存パッケージ
 ├── README.md               # プロジェクト概要
 ├── utils/                  # ユーティリティモジュール
 │   ├── __init__.py
 │   ├── image_processing.py  # 画像処理（眼球検出）
 │   ├── color_analysis.py    # 色空間解析
-│   └── calibration.py       # 色較正機能
+│   ├── calibration.py       # 色較正機能
+│   ├── periorbital_detection.py # 眼窩周囲領域検出
+│   ├── dark_circle_analysis.py  # ダークサークル色解析
+│   └── dark_circle_segmentation.py # ダークサークル領域分割
 ├── docs/                   # ドキュメント
 │   ├── methodology.md      # 技術手法の詳細
 │   ├── api_reference.md    # API リファレンス
@@ -141,7 +158,7 @@ health-tech/
 
 ### 結果の解釈
 
-システムは以下の情報を提供します：
+#### ビリルビン検出結果
 
 ```json
 {
@@ -158,6 +175,31 @@ health-tech/
 }
 ```
 
+#### ダークサークル検出結果
+
+```json
+{
+  "success": true,
+  "average_delta_e": 6.2,
+  "severity": "moderate",
+  "symmetry_score": 0.85,
+  "left_eye": {
+    "delta_e": 6.5,
+    "darkness_ratio": 0.12,
+    "ita_infraorbital": 32.5,
+    "redness_index": 0.15,
+    "blueness_index": 0.08
+  },
+  "right_eye": {
+    "delta_e": 5.9,
+    "darkness_ratio": 0.10,
+    "ita_infraorbital": 33.2,
+    "redness_index": 0.13,
+    "blueness_index": 0.07
+  }
+}
+```
+
 ### リスクレベルの基準
 
 | レベル | ビリルビン値 (mg/dL) | 状態 | 推奨アクション |
@@ -167,11 +209,28 @@ health-tech/
 | 🟠 **High** | 12-20 | 中等度の黄疸 | 速やかに医療機関を受診 |
 | 🔴 **Critical** | > 20 | 重度の黄疸 | 緊急に医療機関を受診 |
 
+### ダークサークル重症度の基準
+
+| レベル | ΔE値 | 状態 | 視覚的特徴 |
+|--------|------|------|-----------|
+| 🟢 **None** | < 3 | なし | ほとんど目立たない |
+| 🟡 **Mild** | 3-5 | 軽度 | わずかに目立つ |
+| 🟠 **Moderate** | 5-8 | 中等度 | 明らかに目立つ |
+| 🔴 **Severe** | > 8 | 重度 | 非常に目立つ |
+
 ### 色特徴の意味
 
+#### ビリルビン検出
 - **HSV Yellow Ratio**: 黄色成分の割合（0-1）
 - **RGB R/B Ratio**: 赤/青比率（黄疸で上昇）
 - **Yellowness Index**: 総合的な黄色度指標
+
+#### ダークサークル検出
+- **Delta E (ΔE)**: 頬と眼窩下領域の色差（CIE2000）
+- **Darkness Ratio**: 明度差の比率
+- **ITA**: Individual Typology Angle（肌色分類）
+- **Redness Index**: 血管成分の指標
+- **Blueness Index**: 静脈うっ血の指標
 
 ## 🔧 技術的詳細
 
@@ -216,6 +275,8 @@ health-tech/
 ### Phase 1: 基礎機能強化（現在）
 - [x] 基本的な色解析機能
 - [x] 眼球検出アルゴリズム
+- [x] ダークサークル検出機能
+- [x] CIELAB色空間解析とΔE計算
 - [ ] Webカメラリアルタイム入力
 - [ ] 複数画像の統計処理
 
