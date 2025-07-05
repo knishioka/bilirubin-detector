@@ -1,0 +1,55 @@
+Research and Educational Use License
+
+Copyright (c) 2024 Bilirubin Detection System Project
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to use
+the Software for research and educational purposes only, subject to the
+following conditions:
+
+1. RESEARCH AND EDUCATIONAL USE ONLY
+   The Software may only be used for non-commercial research and educational
+   purposes. Any commercial use, including but not limited to selling, licensing,
+   or distributing the Software for profit, is strictly prohibited.
+
+2. MEDICAL DISCLAIMER
+   THE SOFTWARE IS NOT INTENDED FOR MEDICAL DIAGNOSIS OR TREATMENT. It is a
+   research prototype and should not be used as a substitute for professional
+   medical advice, diagnosis, or treatment. Always seek the advice of qualified
+   health providers with any questions regarding medical conditions.
+
+3. ATTRIBUTION
+   Any publications, presentations, or other materials that report results
+   obtained using the Software must acknowledge its use and cite the relevant
+   documentation.
+
+4. MODIFICATIONS
+   You may modify the Software for research purposes, provided that:
+   - Modified versions are clearly marked as such
+   - You do not misrepresent the origin of the Software
+   - Modified versions carry prominent notices stating changes made
+
+5. DISTRIBUTION
+   Redistribution of the Software or modified versions thereof must:
+   - Retain this license and all copyright notices
+   - Include the medical disclaimer
+   - Be for research and educational purposes only
+
+6. NO WARRANTY
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+
+7. COMMERCIAL LICENSING
+   For commercial use licensing, please contact: [contact@example.com]
+
+8. REGULATORY COMPLIANCE
+   Users are responsible for ensuring compliance with all applicable laws,
+   regulations, and ethical guidelines in their jurisdiction, particularly
+   those related to medical devices and health data privacy.
+
+By using this Software, you agree to be bound by the terms of this license.

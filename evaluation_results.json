@@ -1,0 +1,20 @@
+[
+  {
+    "image": "eye_moderate_jaundice.jpg",
+    "level": "moderate",
+    "expected": 15.0,
+    "detected": 0,
+    "risk_level": "low",
+    "confidence": 0.6,
+    "error": 15.0
+  },
+  {
+    "image": "eye_none_jaundice.jpg",
+    "level": "none",
+    "expected": 1.0,
+    "detected": 9.85,
+    "risk_level": "moderate",
+    "confidence": 0.6,
+    "error": 8.85
+  }
+]
